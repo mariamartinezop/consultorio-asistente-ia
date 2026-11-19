@@ -1,0 +1,367 @@
+{
+  "name": "Agente consultorio webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.chatInput }}",
+        "options": {
+          "systemMessage": "Sos el asistente virtual del Consultorio Médico Bienestar del Paraná, en Posadas, Misiones. Atendés por chat, de forma amable, clara y breve.\n\nFECHA DE HOY: {{ $now.format('cccc dd/MM/yyyy') }}. Usala para interpretar \"mañana\" o \"el jueves que viene\".\n\nDATOS DEL CONSULTORIO:\n- Dirección: Av. Mitre 1542, Posadas, Misiones\n- Horario: lunes a viernes de 9:00 a 18:00. No se atiende sábados, domingos ni feriados.\n- Cada turno dura 30 minutos.\n- Profesionales: Dra. Laura Benítez y Dr. Martín Ferreyra.\n- Obras sociales: IAPSER, OSDE, Swiss Medical, IPS, Consalud. También se atiende particular.\n\nCÓMO SACAR UN TURNO:\nPedí los datos de a uno, sin abrumar: nombre y apellido, motivo de la consulta, día y horario preferido, y obra social o particular.\nAntes de confirmar, usá la herramienta para consultar los turnos y verificá que el horario esté libre. Nunca asumas que un horario está libre sin consultar. Si está ocupado, ofrecé las 2 o 3 opciones libres más cercanas.\nCuando el horario esté confirmado y tengas todos los datos, guardá el turno y resumí al paciente: día, hora, profesional y motivo.\n\nLÍMITES:\n- No des diagnósticos ni recomiendes medicación. Eso lo evalúa el profesional en la consulta; ofrecé agendar un turno.\n- Si describe una urgencia, indicale que acuda a una guardia y no agendes un turno común.\n- Si no entendés algo, preguntá en vez de asumir."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        32,
+        -96
+      ],
+      "id": "89237ec9-f14f-45c5-8f85-193db1c89434",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        144
+      ],
+      "id": "1bf5dfea-5aef-456f-a771-92d0765662b7",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "JrHcbiXHx4VjQSaF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        32,
+        160
+      ],
+      "id": "305142d7-673c-491b-ae7f-1f08c34b4f2e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Guarda un turno nuevo en la base de datos. Usala solo cuando el horario esté verificado como libre y tengas nombre, fecha, hora y motivo.",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "turnos",
+          "mode": "list",
+          "cachedResultName": "turnos"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nombre": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('nombre', ``, 'string') }}",
+            "telefono": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('telefono', ``, 'string') }}",
+            "fecha": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('fecha', ``, 'string') }}",
+            "hora": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('hora', ``, 'string') }}",
+            "motivo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('motivo', ``, 'string') }}",
+            "profesional": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('profesional', ``, 'string') }}",
+            "obra_social": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('obra_social', ``, 'string') }}",
+            "estado": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('estado', ``, 'string') }}",
+            "observaciones": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('observaciones', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "telefono",
+              "displayName": "telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "fecha",
+              "displayName": "fecha",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "hora",
+              "displayName": "hora",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "time",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "motivo",
+              "displayName": "motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "profesional",
+              "displayName": "profesional",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "obra_social",
+              "displayName": "obra_social",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "observaciones",
+              "displayName": "observaciones",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "creado_en",
+              "displayName": "creado_en",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.8,
+      "position": [
+        336,
+        112
+      ],
+      "id": "03759ea5-8e6b-4b6e-88b7-853ee5b15577",
+      "name": "agendar_turno",
+      "credentials": {
+        "postgres": {
+          "id": "Shiy86uAyWhdKy15",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Devuelve los turnos ya agendados con fecha, hora y profesional. Usala antes de confirmar un turno para ver qué horarios están ocupados.",
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "turnos",
+          "mode": "list",
+          "cachedResultName": "turnos"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.8,
+      "position": [
+        192,
+        176
+      ],
+      "id": "beabd5e8-05e4-416a-b873-2f50b8177051",
+      "name": "consultar_turnos",
+      "credentials": {
+        "postgres": {
+          "id": "Shiy86uAyWhdKy15",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "consultorio",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        -192,
+        -96
+      ],
+      "id": "8894bf84-d9bb-4c4d-a455-7e053a33485e",
+      "name": "Webhook",
+      "webhookId": "e8db3ea0-8f3f-4c06-907c-d1615c67b5ba"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        400,
+        -96
+      ],
+      "id": "22572c20-c568-464f-bf67-155695320512",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agendar_turno": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_turnos": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e6fc9013-bb17-4739-a42d-9032f33708b4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "707393389574cfbb68d8030fd7d62fc9cada71f04385ff0d17181feca556493a"
+  },
+  "nodeGroups": [],
+  "id": "HqRLFV7BHZN8xwjT",
+  "tags": []
+}

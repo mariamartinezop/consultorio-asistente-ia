@@ -1,0 +1,14 @@
+# Secretos: nunca subir
+.env
+*.key
+*.pem
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Datos locales de contenedores
+postgres_data/
+n8n_data/

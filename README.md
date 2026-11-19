@@ -68,7 +68,7 @@ docker compose version
 
 ### 2. Clonar el repositorio y configurar las variables
 ```bash
-git clone https://github.com/<tu-usuario>/<tu-repo>.git consultorio
+git clone https://github.com/mariamartinezop/consultorio-asistente-ia.git consultorio
 cd consultorio
 cp .env.example .env
 nano .env        # completar POSTGRES_PASSWORD y N8N_ENCRYPTION_KEY

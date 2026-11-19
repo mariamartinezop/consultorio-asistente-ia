@@ -60,18 +60,16 @@
       background:
         radial-gradient(900px 420px at 85% 10%, rgba(56,189,248,.28), transparent 60%),
         radial-gradient(700px 380px at 5% 95%, rgba(37,99,235,.35), transparent 60%),
-        linear-gradient(180deg, rgba(8,26,48,.94), rgba(12,42,74,.9)),
-        url('hero.jpg') center / cover no-repeat,
-        #081a30;
+        linear-gradient(180deg, #081a30, #0c2a4a);
     }
     .hero::before {
-      content: ""; position: absolute; inset: 0; opacity: .5; pointer-events: none;
+      content: ""; position: absolute; inset: 0; opacity: .5; pointer-events: none; z-index: 1;
       background-image: linear-gradient(rgba(148,197,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,197,255,.08) 1px, transparent 1px);
       background-size: 46px 46px;
       -webkit-mask-image: radial-gradient(ellipse at 70% 40%, #000 20%, transparent 70%);
               mask-image: radial-gradient(ellipse at 70% 40%, #000 20%, transparent 70%);
     }
-    .hero-grid { position: relative; display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: center; }
+    .hero-grid { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr; align-items: center; }
     .hero h1 { font-size: clamp(34px, 5vw, 56px); line-height: 1.12; letter-spacing: -.5px; }
     .hero p { margin: 20px 0 32px; font-size: 19px; max-width: 540px; color: #cfe3f5; }
     .btn { display: inline-block; padding: 14px 28px; border-radius: 12px; font-weight: 600; font-size: 16px; border: 0; cursor: pointer; transition: transform .15s, box-shadow .15s, background .15s; }
@@ -82,7 +80,7 @@
     .btn-ghost:hover { background: rgba(255,255,255,.14); }
 
     /* Maqueta decorativa de pantallas (sin texto) */
-    .devices { position: relative; height: 380px; }
+    .devices { position: relative; height: 440px; }
     .laptop { position: absolute; left: 0; top: 10px; width: 88%; }
     .screen { background: #fff; border-radius: 16px 16px 6px 6px; border: 7px solid #1e293b; box-shadow: 0 30px 60px rgba(0,0,0,.45); overflow: hidden; }
     .screen .bar { height: 22px; background: #eaf3fb; display: flex; align-items: center; gap: 5px; padding: 0 10px; }
@@ -107,6 +105,14 @@
     .pbub.b3 { height: 34px; }
     .psend { margin-top: auto; height: 26px; border-radius: 14px; background: #eef2f7; position: relative; }
     .psend::after { content: ""; position: absolute; right: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--grad); }
+    /* Foto de fondo de la portada: se ve a la derecha y el texto queda sobre una capa oscura */
+    .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; z-index: 0; }
+    .hero::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: linear-gradient(90deg, rgba(8,26,48,.94) 0%, rgba(8,26,48,.8) 40%, rgba(8,26,48,.28) 100%); }
+    .hero-grid > div { max-width: 660px; }
+    .hero h1 { text-shadow: 0 2px 22px rgba(0,0,0,.4); }
+    .hero p { text-shadow: 0 1px 12px rgba(0,0,0,.4); }
+    @media (max-width: 900px) { .hero::after { background: linear-gradient(180deg, rgba(8,26,48,.9), rgba(8,26,48,.78)); } }
     @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } .devices { display: none; } .btn-ghost { margin: 10px 0 0 0; } }
 
     /* ---------- Franja de datos con íconos ---------- */
@@ -132,8 +138,8 @@
 
     .pro { text-align: center; }
     .avatar { width: 132px; height: 132px; border-radius: 50%; margin: 0 auto 16px; display: grid; place-items: center; font-size: 40px; font-weight: 700; color: #fff; background-color: var(--blue); background-size: cover; background-position: center; border: 5px solid var(--sky-light); box-shadow: 0 10px 24px rgba(2,132,199,.3); }
-    .av1 { background-image: url('dra-benitez.jpg'); }
-    .av2 { background-image: url('dr-ferreyra.jpg'); }
+    .avatar { position: relative; overflow: hidden; }
+    .avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 22%); }
     .pro .role { color: var(--blue); font-weight: 600; font-size: 14px; }
 
     .band { background: linear-gradient(180deg, #e8f4fd, #f4f9fd); }
@@ -209,37 +215,13 @@
 
   <main id="inicio">
     <div class="hero">
+      <img class="hero-bg" data-foto="hero" alt="">
       <div class="wrap hero-grid">
         <div>
           <h1>Tu salud, en buenas manos y sin esperas</h1>
           <p>Atención médica general en Posadas. Sacá tu turno en cualquier momento chateando con nuestro asistente virtual, sin llamar por teléfono.</p>
           <button class="btn btn-primary" onclick="abrirChat()">Sacar turno ahora</button>
           <a href="#horarios" class="btn btn-ghost">Ver horarios</a>
-        </div>
-
-        <div class="devices" aria-hidden="true">
-          <div class="laptop">
-            <div class="screen">
-              <div class="bar"><i></i><i></i><i></i></div>
-              <div class="ui">
-                <div class="side"><b></b><b></b><b></b><b></b></div>
-                <div class="main">
-                  <div class="line w60"></div>
-                  <div class="line w40"></div>
-                  <div class="tiles"><s></s><s></s><s></s></div>
-                  <div class="chart"></div>
-                </div>
-              </div>
-            </div>
-            <div class="base"></div>
-          </div>
-          <div class="phone">
-            <div class="notch"></div>
-            <div class="pbub b1"></div>
-            <div class="pbub b2"></div>
-            <div class="pbub b3"></div>
-            <div class="psend"></div>
-          </div>
         </div>
       </div>
     </div>
@@ -296,12 +278,12 @@
         <p class="sub">Profesionales comprometidos con una atención cercana y clara.</p>
         <div class="grid">
           <div class="card pro">
-            <div class="avatar av1">LB</div>
+            <div class="avatar"><span>LB</span><img data-foto="dra-benitez" alt=""></div>
             <h3>Dra. Laura Benítez</h3>
             <span class="role">Medicina general</span>
           </div>
           <div class="card pro">
-            <div class="avatar av2">MF</div>
+            <div class="avatar"><span>MF</span><img data-foto="dr-ferreyra" alt=""></div>
             <h3>Dr. Martín Ferreyra</h3>
             <span class="role">Medicina general</span>
           </div>
@@ -351,6 +333,21 @@
       <span>Proyecto académico. El asistente no brinda diagnósticos.</span>
     </div>
   </footer>
+
+  <script>
+    // Busca las fotos en la carpeta (jpg, jpeg, png o webp). Si no hay foto, se ve el diseño sin ella.
+    document.querySelectorAll('img[data-foto]').forEach(function (img) {
+      var exts = ['jpg', 'jpeg', 'png', 'webp'];
+      var i = 0;
+      var base = img.getAttribute('data-foto');
+      img.onerror = function () {
+        i++;
+        if (i < exts.length) { img.src = base + '.' + exts[i]; }
+        else { img.remove(); }
+      };
+      img.src = base + '.' + exts[0];
+    });
+  </script>
 
   <script type="module">
     import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
